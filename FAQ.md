@@ -4716,6 +4716,7 @@ The confusing Microsoft specific server error *User is authenticated but not con
 
 **Consumer Outlook/Hotmail/Live account**
 
+* A VPN is being used. Try turning off the VPN.
 * IMAP is disabled, which is the default for new Outlook accounts now
 
 To fix this:
@@ -4730,6 +4731,7 @@ To fix this:
 
 **Corporate, education, etc. account**
 
+* A VPN is being used. Try turning off the VPN.
 * External access is administratively disabled, please see [this article](https://docs.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/client-access-rules/client-access-rules) about how an administrator can enable it again
 * Access by third-party apps is administratively disabled or allowed for specific apps only
 * IMAP is administratively disabled, please see [this article](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/pop3-and-imap4/enable-or-disable-pop3-or-imap4-access) about how an administrator can enable it again
