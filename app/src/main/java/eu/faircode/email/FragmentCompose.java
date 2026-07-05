@@ -2593,7 +2593,7 @@ public class FragmentCompose extends FragmentBase {
         prefs.edit().putBoolean("markdown", markdown).apply();
 
         Bundle args = new Bundle();
-        args.putBoolean("markdown", markdown);
+        args.putBoolean("markdown", true);
         args.putBoolean("show", true);
         onAction(R.id.menu_save, args, "Markdown");
     }
