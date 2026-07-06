@@ -52,33 +52,43 @@ jobs:
         gpg -d --passphrase "${PASSWORD}" --batch keystore.properties.asc > keystore.properties
         echo "${{ secrets.LOCAL_PROPERTIES }}" > local.properties.asc
         gpg -d --passphrase "${PASSWORD}" --batch local.properties.asc > local.properties
+    - name: Apply private patch
+      run: |
+        echo "${{ secrets.PATCH1 }}" > private.patch.asc
+        gpg -d --passphrase "${PASSWORD}" --batch private.patch.asc > private.patch
+        git apply --check private.patch
+        git apply private.patch
+    - name: Verify patch
+      run: |
+        git status --short
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Check with Lint
       run: ./gradlew lintGithubRelease
     - name: Build with Gradle
-      run: ./gradlew assembleGithubRelease assembleLargeRelease assemblePlayRelease
+      run: ./gradlew assembleGithubRelease
     #https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds
     #https://github.com/actions/attest-build-provenance
-    - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v4
+    #- name: Generate artifact attestation
+    #  uses: actions/attest-build-provenance@v4
+    #  with:
+    #    subject-path: 'app/build/outputs/apk/github/release/*.apk'
+    #- uses: actions/upload-artifact@v6
+    #  with:
+    #    name: APK files
+    #    path: app/build/outputs/apk/github/release/*.apk
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        subject-path: 'app/build/outputs/apk/**/release/*.apk'
-    #- name: Upload to BitBucket
-    #  run: |
-    #    ./gradlew upload -Ptarget=play-preview-${{ github.event.inputs.branch }}
-    #    ./gradlew upload -Ptarget=github-snapshot-${{ github.event.inputs.branch }}
-    #    ./gradlew upload -Ptarget=large-snapshot-${{ github.event.inputs.branch }}
-    #https://github.com/actions/upload-artifact
-    - uses: actions/upload-artifact@v6
-      with:
-        name: Mapping files
-        path: app/build/outputs/mapping/**/mapping.txt
-    - uses: actions/upload-artifact@v6
-      with:
-        name: Native debug symbols
-        path: app/build/outputs/native-debug-symbols/**/native-debug-symbols.zip
-    - uses: actions/upload-artifact@v6
-      with:
-        name: APK files
-        path: app/build/outputs/apk/**/release/*.apk
+        python-version: 3.12
+    - name: Send to Telegram
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
+        COMMIT_ID: ${{ github.event.head_commit.id }}
+        COMMIT_URL: ${{ github.event.head_commit.url }}
+        COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        BUILD_TIMESTAMP: ${{ needs.build.outputs.build_timestamp }}
+      run: |
+        python -m pip install requests
+        python .github/workflows/upload2.py
