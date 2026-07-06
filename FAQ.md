@@ -4421,6 +4421,7 @@ The subject of a received message can be edited, also on the email server, via t
 *Markdown (1.2061+)*
 
 Composing messages using [Markdown](https://en.wikipedia.org/wiki/Markdown) can be enabled via the three-dots overflow menu of the message editor.
+Please see [this FAQ](#faq99).
 
 <br />
 
